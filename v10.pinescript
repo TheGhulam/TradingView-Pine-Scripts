@@ -28,24 +28,8 @@ f_tfIsIntraday(_res) =>
 f_drawOnlyLineX(_x1, _y1, _x2, _y2, _xloc, _extend, _color, _style, _width) =>
     id = line.new(_x1, _y1, _x2, _y2, _xloc, _extend, _color, _style, _width)
 
-f_drawLineX(_x1, _y1, _x2, _y2, _xloc, _extend, _color, _style, _width) =>
-    var id = line.new(_x1, _y1, _x2, _y2, _xloc, _extend, _color, _style, _width)
-    line.set_xy1(id, _x1, _y1)
-    line.set_xy2(id, _x2, _y2)
-    line.set_color(id, _color)
-    id
-
 f_drawOnlyBoxX(_left, _top, _right, _bottom, _border_color, _border_width, _border_style) =>
     box.new(_left, _top, _right, _bottom, _border_color, _border_width, _border_style, bgcolor=_border_color)
-
-f_drawOnlyLabelX(_x, _y, _text, _xloc, _yloc, _color, _style, _textcolor, _size, _textalign, _tooltip) =>
-    label.new(_x, _y, _text, _xloc, _yloc, _color, _style, _textcolor, _size, _textalign, _tooltip)
-
-f_drawLabelX(_x, _y, _text, _xloc, _yloc, _color, _style, _textcolor, _size, _textalign, _tooltip) =>
-    var id = label.new(_x, _y, _text, _xloc, _yloc, _color, _style, _textcolor, _size, _textalign, _tooltip)
-    label.set_xy(id, _x, _y)
-    label.set_text(id, _text)
-    label.set_tooltip(id, _tooltip)
 
 f_getHighLow(_len, _calc, _offset) =>
     if _calc
@@ -304,17 +288,17 @@ if pointOfControl and pocExtend != 'None'
 // ======
 
 // Inputs
-
+group_mtfma = "Multi Timeframe Moving Averages"
 // global input
-i_hideFromLowerTf = input.bool(false, 'Hide MA from lower timeframe')
+i_hideFromLowerTf = input.bool(false, 'Hide MA from lower timeframe', group=group_mtfma)
 // label input
 const string g_label = 'MA Labels'
-i_showType = input.bool(false, 'Display MA Type', group = g_label)
-i_showLen = input.bool(false, 'Display MA Length', group = g_label)
-i_showTf = input.bool(false, 'Display MA Timeframe', group = g_label)
-i_showN = input.bool(false, 'Display MA Number', group = g_label, tooltip = 'Helps you find and configure the moving average more easily')
-i_labelOffset = input.int(0, 'Label offset', minval=0, group = g_label)
-i_labelSize = input.string('normal', 'Label size', options = ['tiny', 'small', 'normal', 'large', 'huge'])
+i_showType = input.bool(false, 'Display MA Type', group=group_mtfma)
+i_showLen = input.bool(false, 'Display MA Length', group=group_mtfma)
+i_showTf = input.bool(false, 'Display MA Timeframe', group = group_mtfma)
+i_showN = input.bool(false, 'Display MA Number', group = group_mtfma, tooltip = 'Helps you find and configure the moving average more easily')
+i_labelOffset = input.int(0, 'Label offset', minval=0, group = group_mtfma)
+i_labelSize = input.string('normal', 'Label size', options = ['tiny', 'small', 'normal', 'large', 'huge'], group = group_mtfma)
 
 // Funcs
 f_dema(_src, _length) =>
@@ -594,17 +578,15 @@ f_addMaLabel(v_ma10_visible, 10, i_ma10_src, v_ma10, i_ma10_tf, i_ma10_type, i_m
 // ==============
 // Heatmap Volume 
 // ==============
-
+group_hmv = "Heatmap Volume"
 // Inputs
-lengthh = input.int(305, title='MA Length', minval = 2, tooltip = 'Moving Average Length\n\n- Smaller values will respond more quickly and activate more frequently. (Best for short-term analysis)\n- Larger values will have a slower response, will be less sensitive to small volume variations, and will highlight large volumes. (Best for long-term analysis)\n\nFormula: How many stdev is the volume far from the Moving Average?')
-slength = input.int(305, title='Standard Deviation Length', minval=2, tooltip = 'Standard Deviation lookback period.\n\nFormula: How many stdev is the volume far from the Moving Average?')
+lengthh = input.int(305, title='MA Length', minval = 2, group=group_hmv, tooltip = 'Moving Average Length\n\n- Smaller values will respond more quickly and activate more frequently. (Best for short-term analysis)\n- Larger values will have a slower response, will be less sensitive to small volume variations, and will highlight large volumes. (Best for long-term analysis)\n\nFormula: How many stdev is the volume far from the Moving Average?')
+slength = input.int(305, title='Standard Deviation Length', minval=2, group=group_hmv, tooltip = 'Standard Deviation lookback period.\n\nFormula: How many stdev is the volume far from the Moving Average?')
 g_hmz = 'Heatmap Threshold Multipliers'
 thresholdExtraHigh = input.float(4, title='Extra High Multiplier', tooltip = 'Volume Threshold Multiplier\neg: 4 = 400% or 4 x Stdev above the mean', group=g_hmz)
 thresholdHigh = input(2.5, title='High Multiplier', group=g_hmz)
 thresholdMedium = input.float(1, title='Medium Multiplier', group=g_hmz)
 thresholdNormal = input(-0.5, title='Normal Multiplier', group=g_hmz)
-
-// Colors
 
 // config
 g_color = 'Color settings'
@@ -675,13 +657,15 @@ plotcandle(open, high, low, close, title="Heatmap Candles", color=bodycolor, wic
 
 // ==============
 // 4H Supertrend
-// ==============       
+// ==============      
 
-Periods = input.int(title="ATR Period", defval=10)
-Multiplier = input.float(title="ATR Multiplier", step=0.1, defval=3.0)
-changeATR= input.bool(title="Change ATR Calculation Method ?", defval=true)
-showsignals = input.bool(title="Show Buy/Sell Signals ?", defval=false)
-highlighting = input.bool(title="Highlighter On/Off ?", defval=false)
+group_st = "Supertrend"
+
+Periods = input.int(title="ATR Period", defval=10, group=group_st)
+Multiplier = input.float(title="ATR Multiplier", step=0.1, defval=3.0, group=group_st)
+changeATR= input.bool(title="Change ATR Calculation Method ?", defval=true, group=group_st)
+showsignals = input.bool(title="Show Buy/Sell Signals ?", defval=false, group=group_st)
+highlighting = input.bool(title="Highlighter On/Off ?", defval=false, group=group_st)
 
 // Requesting 4-hour data
 res = "240"
